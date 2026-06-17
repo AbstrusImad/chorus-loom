@@ -1,0 +1,269 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Chorus Loom design tokens.
+  Dark is the default theme. Light is an elegant alternate.
+  Brand accents follow the supplied palette interpreted with care.
+*/
+
+:root,
+[data-theme='dark'] {
+  --ink0: #06080C;
+  --ink1: #0A0D13;
+  --ink2: #12161F;
+  --ink3: #1A1F2B;
+  --ink4: #232A39;
+  --ink5: #2D3548;
+
+  --bone: #EEF2F7;
+  --bone2: #B8C2CE;
+  --ash: #7A8390;
+  --mute: #4A5061;
+  --dim: #2A2E3A;
+
+  --sage: #6B9FE3;
+  --sage-text: #6B9FE3;
+  --sage-ink: #061226;
+  --sage-glow: rgba(107, 159, 227, 0.40);
+
+  --champagne: #7DD3E0;
+  --champagne-text: #7DD3E0;
+  --champagne-ink: #08222A;
+  --champagne-glow: rgba(125, 211, 224, 0.36);
+
+  --ember: #5E7A8C;
+  --ember-glow: rgba(94, 122, 140, 0.40);
+
+  --crimson: #D86969;
+  --crimson-glow: rgba(216, 105, 105, 0.34);
+
+  --line1: rgba(255, 255, 255, 0.05);
+  --line2: rgba(255, 255, 255, 0.10);
+  --line3: rgba(255, 255, 255, 0.18);
+
+  --shadow-soft: 0 30px 80px -40px rgba(0, 0, 0, 0.85);
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --ink0: #F8FAFD;
+  --ink1: #F2F6FA;
+  --ink2: #FFFFFF;
+  --ink3: #F7FAFD;
+  --ink4: #EDF3F8;
+  --ink5: #E0E9F2;
+
+  --bone: #172235;
+  --bone2: #34455E;
+  --ash: #68788E;
+  --mute: #91A0B1;
+  --dim: #D5DDE7;
+
+  --sage: #6B9FE3;
+  --sage-text: #356AAE;
+  --sage-ink: #FFFFFF;
+  --sage-glow: rgba(53, 106, 174, 0.22);
+
+  --champagne: #7DD3E0;
+  --champagne-text: #247586;
+  --champagne-ink: #FFFFFF;
+  --champagne-glow: rgba(36, 117, 134, 0.20);
+
+  --ember: #5E7A8C;
+  --ember-glow: rgba(94, 122, 140, 0.22);
+
+  --crimson: #C84F5A;
+  --crimson-glow: rgba(200, 79, 90, 0.20);
+
+  --line1: rgba(19, 19, 34, 0.07);
+  --line2: rgba(19, 19, 34, 0.14);
+  --line3: rgba(19, 19, 34, 0.24);
+
+  --shadow-soft: 0 30px 80px -45px rgba(31, 50, 80, 0.45);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ink0);
+  color: var(--bone);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+
+#root {
+  position: relative;
+  isolation: isolate;
+}
+
+::selection {
+  background: var(--sage-glow);
+  color: var(--bone);
+}
+
+/* Scrollbars kept thin and quiet. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line2);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--line3);
+  background-clip: content-box;
+}
+
+/* Typography helpers */
+.font-display { font-family: 'Syne', system-ui, sans-serif; }
+.font-body { font-family: 'DM Sans', system-ui, sans-serif; }
+.font-mono { font-family: 'IBM Plex Mono', monospace; }
+.font-serif { font-family: 'Instrument Serif', Georgia, serif; }
+
+.tracking-loom { letter-spacing: 0.24em; }
+.tracking-wide-mono { letter-spacing: 0.32em; }
+
+/* A reusable hairline surface. */
+.loom-surface {
+  background:
+    linear-gradient(180deg, var(--ink2), var(--ink1));
+  border: 1px solid var(--line1);
+  border-radius: 22px;
+  box-shadow: var(--shadow-soft);
+}
+
+.hairline { border: 1px solid var(--line1); }
+.hairline-2 { border: 1px solid var(--line2); }
+
+/* Glow text */
+.text-glow-sage { text-shadow: 0 0 24px var(--sage-glow); }
+.text-glow-champagne { text-shadow: 0 0 24px var(--champagne-glow); }
+
+/* Focus ring kept elegant. */
+:focus-visible {
+  outline: 1px solid var(--sage);
+  outline-offset: 2px;
+}
+
+/* Range input shared style for the tempo / weight dials and sliders. */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 2px;
+  background: var(--line2);
+  border-radius: 999px;
+  cursor: pointer;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--sage);
+  border: 2px solid var(--ink0);
+  box-shadow: 0 0 12px var(--sage-glow);
+}
+input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--sage);
+  border: 2px solid var(--ink0);
+  box-shadow: 0 0 12px var(--sage-glow);
+}
+
+/* Text input + select reset to fit the ink surfaces. */
+.loom-input {
+  background: var(--ink3);
+  border: 1px solid var(--line2);
+  border-radius: 12px;
+  color: var(--bone);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  padding: 10px 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+}
+.loom-input:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px var(--sage-glow);
+  outline: none;
+}
+.loom-input::placeholder { color: var(--mute); }
+
+select.loom-input {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ash) 50%),
+    linear-gradient(135deg, var(--ash) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
+}
+
+/* Hidden scrollbar utility for inner scroll regions that should stay quiet. */
+.scroll-quiet {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line2) transparent;
+}
+
+/* Grain / vignette layers used by the ambient backdrop. */
+.vignette {
+  background: radial-gradient(120% 120% at 50% 0%, transparent 40%, rgba(0,0,0,0.55) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.08s !important;
+  }
+}
+
+/* Reduced motion class toggled from settings, independent of OS setting. */
+.reduce-motion * {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.08s !important;
+}
+
+.text-balance { text-wrap: balance; }
+
+/* Tiny inline control buttons used on the Loom Stage step editor. */
+.loom-mini {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--bone2);
+  background: var(--ink3);
+  border: 1px solid var(--line2);
+  border-radius: 8px;
+  padding: 3px 7px;
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+.loom-mini:hover {
+  border-color: var(--line3);
+  color: var(--bone);
+}
