@@ -17,8 +17,8 @@ import { getRoleById, ROLE_LIBRARY } from '../data/roleLibrary.js'
 // ---- live contract coordinates ------------------------------------------
 // The parent wires the real address and deploy tx after deployment, then
 // rebuilds. Until then these are the zero placeholders.
-export const CONTRACT_ADDRESS = '0x86e99d0D5A679e01795ABa2D3f23B9c393693F20'
-export const DEPLOY_TX = '0x188dcdae5c6fd3bba395689bba0d80d96b20e8da1353351ea412563809c621a1'
+export const CONTRACT_ADDRESS = '0x95011e748Faf5DE59c633493BF9345088CeE84EF'
+export const DEPLOY_TX = '0x707c4c3edd69de4c0fd5510457c38f5f8d80688ac9b08c9cd7d93179ef396617'
 export const EXPLORER = 'https://explorer-bradbury.genlayer.com'
 export const FAUCET = 'https://testnet-faucet.genlayer.foundation/'
 

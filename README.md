@@ -19,9 +19,9 @@ Governance is not only voting. It is choreography.
 ## Live
 
 - App: https://chorus-loom.pages.dev/
-- Contract (GenLayer Bradbury Testnet): `0x86e99d0D5A679e01795ABa2D3f23B9c393693F20`
-- Explorer: https://explorer-bradbury.genlayer.com/address/0x86e99d0D5A679e01795ABa2D3f23B9c393693F20
-- Deploy transaction: `0x188dcdae5c6fd3bba395689bba0d80d96b20e8da1353351ea412563809c621a1`
+- Contract (GenLayer Bradbury Testnet): `0x95011e748Faf5DE59c633493BF9345088CeE84EF`
+- Explorer: https://explorer-bradbury.genlayer.com/address/0x95011e748Faf5DE59c633493BF9345088CeE84EF
+- Deploy transaction: `0x707c4c3edd69de4c0fd5510457c38f5f8d80688ac9b08c9cd7d93179ef396617`
 - Repository: https://github.com/AbstrusImad/chorus-loom
 - Faucet (test GEN): https://testnet-faucet.genlayer.foundation/
 
