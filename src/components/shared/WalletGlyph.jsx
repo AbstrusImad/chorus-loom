@@ -25,24 +25,31 @@ export default function WalletGlyph() {
       <motion.button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        title={connected ? shortAddress(wallet.address) : 'Wallet'}
-        className="relative flex h-10 w-10 items-center justify-center rounded-full"
-        style={{ background: 'var(--ink1)', border: '1px solid var(--line2)' }}
-        whileHover={{ scale: 1.05, boxShadow: `0 0 22px ${haloVar}` }}
+        title={connected ? shortAddress(wallet.address) : 'Connect wallet'}
+        className="relative flex items-center gap-2 rounded-full pl-3 pr-4 h-10 font-mono text-[11px] tracking-loom uppercase"
+        style={{
+          background: connected ? 'var(--ink1)' : 'var(--sage)',
+          color: connected ? 'var(--bone)' : 'var(--ink0)',
+          border: connected ? '1px solid var(--line2)' : '1px solid var(--sage)'
+        }}
+        whileHover={{ scale: 1.04, boxShadow: `0 0 22px ${connected ? haloVar : 'var(--sage-glow)'}` }}
         whileTap={{ scale: 0.96 }}
       >
         <span
-          className="inline-block h-3 w-3 rounded-full"
+          className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
           style={{
-            background: `var(--${accent})`,
+            background: connected ? `var(--${accent})` : 'var(--ink0)',
             boxShadow: connected ? `0 0 12px ${haloVar}` : 'none'
           }}
         />
+        <span className="whitespace-nowrap">
+          {connected ? shortAddress(wallet.address) : 'Connect Wallet'}
+        </span>
         {connected ? (
           <motion.span
             className="absolute inset-0 rounded-full pointer-events-none"
             style={{ border: `1px solid var(--${accent})` }}
-            animate={{ opacity: [0.5, 0, 0.5], scale: [1, 1.35, 1] }}
+            animate={{ opacity: [0.4, 0, 0.4], scale: [1, 1.12, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           />
         ) : null}
