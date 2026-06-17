@@ -2,9 +2,9 @@
 // Thin, defensive wrapper over localStorage. Everything in Chorus Loom persists
 // locally so a reload keeps the user's rituals and settings. No network.
 
-const RITUALS_KEY = 'chorus-loom:rituals:v1'
+const RITUALS_KEY = 'chorus-loom:rituals:v2'
 const SETTINGS_KEY = 'chorus-loom:settings:v1'
-const SEEDED_KEY = 'chorus-loom:seeded:v1'
+const SEEDED_KEY = 'chorus-loom:seeded:v2'
 
 function safeParse(raw, fallback) {
   if (!raw) return fallback

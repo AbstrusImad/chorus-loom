@@ -10,12 +10,10 @@ import {
   saveRituals,
   loadSettings,
   saveSettings,
-  hasSeeded,
   markSeeded,
   clearAll,
   DEFAULT_SETTINGS
 } from '../utils/storage.js'
-import { DEMO_RITUALS } from '../data/demoRituals.js'
 import { generateRitualArtifact } from '../utils/generateRitualArtifact.js'
 import { setGenLayerMode, fetchChainRelics } from '../genlayer/genlayerClient.js'
 
@@ -41,12 +39,11 @@ function initState() {
   setGenLayerMode(settings.genlayerMode)
   let rituals = loadRituals()
   if (rituals == null) {
-    if (!hasSeeded()) {
-      rituals = DEMO_RITUALS.map((r) => ({ ...r, createdAt: Date.now(), sealed: true }))
-      markSeeded()
-    } else {
-      rituals = []
-    }
+    // No seeded demo rituals: the Reliquary shows only real, on-chain weaves
+    // notarized on GenLayer Bradbury (fetched live from the contract), plus
+    // whatever the current user seals.
+    rituals = []
+    markSeeded()
   }
   return {
     chamber: 'threshold',
