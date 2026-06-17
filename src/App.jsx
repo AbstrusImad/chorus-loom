@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useApp } from './store/AppStore.jsx'
 import ThreadField from './components/animations/ThreadField.jsx'
 import ChamberRail from './components/shared/ChamberRail.jsx'
+import WalletGlyph from './components/shared/WalletGlyph.jsx'
 import { CHAMBERS } from './data/constants.js'
 
 import Threshold from './spaces/Threshold.jsx'
@@ -65,6 +66,7 @@ export default function App() {
       ) : null}
 
       {entered && chamber !== 'threshold' ? <ChamberRail active={chamber} onGo={go} /> : null}
+      {entered && chamber !== 'threshold' ? <WalletGlyph /> : null}
 
       <div className="relative z-10 h-full w-full" style={{ paddingLeft: entered && chamber !== 'threshold' ? 64 : 0 }}>
         <AnimatePresence mode="wait" custom={dir}>

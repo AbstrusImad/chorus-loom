@@ -14,6 +14,19 @@ import { generateRitualArtifact } from '../utils/generateRitualArtifact.js'
 import { exportSingleRitual } from '../utils/exportImport.js'
 import { useMotionLevel } from '../components/animations/useMotionLevel.js'
 
+// A live on-chain relic carries verified markers and a synthetic id. When a
+// person echoes or refines it, hand back a clean local ritual so it becomes an
+// editable draft rather than a frozen verified record.
+function stripChainMarkers(ritual) {
+  if (!ritual.onChain && !ritual.verified) return ritual
+  const { onChain, verified, txHash, contract, explorerUrl, artifact, ...rest } = ritual
+  return {
+    ...rest,
+    id: `rit_local_${Math.random().toString(16).slice(2, 10)}`,
+    createdAt: Date.now()
+  }
+}
+
 export default function Reliquary() {
   const { state, loadDraft, go, duplicateRitual, deleteRitual } = useApp()
   const motionLevel = useMotionLevel()
@@ -22,22 +35,40 @@ export default function Reliquary() {
   const [openRitual, setOpenRitual] = useState(null)
 
   const filtered = useMemo(() => {
-    return state.rituals.filter((r) => {
+    // Merge local rituals with the live on-chain feed. On-chain relics are kept
+    // distinct and marked verified. We avoid showing the same weave twice when a
+    // locally sealed ritual already carries its on-chain id.
+    const localOnChainIds = new Set(
+      state.rituals
+        .map((r) => (r.artifact && r.artifact.onChainId) || null)
+        .filter(Boolean)
+    )
+    const chain = (state.chainRelics || []).filter(
+      (c) => !localOnChainIds.has(c.artifact && c.artifact.onChainId)
+    )
+    const all = [...state.rituals, ...chain]
+    return all.filter((r) => {
       const matchesQuery =
-        !query || r.name.toLowerCase().includes(query.toLowerCase()) || (r.intention || '').toLowerCase().includes(query.toLowerCase())
+        !query ||
+        r.name.toLowerCase().includes(query.toLowerCase()) ||
+        (r.intention || '').toLowerCase().includes(query.toLowerCase())
       const matchesType = typeFilter === 'All' || r.type === typeFilter
       return matchesQuery && matchesType
     })
-  }, [state.rituals, query, typeFilter])
+  }, [state.rituals, state.chainRelics, query, typeFilter])
 
   function openRelic(ritual) {
     setOpenRitual(ritual)
   }
 
   function refine(ritual) {
-    loadDraft(ritual)
+    loadDraft(stripChainMarkers(ritual))
     setOpenRitual(null)
     go('loom')
+  }
+
+  function echo(ritual) {
+    duplicateRitual(stripChainMarkers(ritual))
   }
 
   const openArtifact = openRitual ? openRitual.artifact || generateRitualArtifact(openRitual) : null
@@ -100,7 +131,7 @@ export default function Reliquary() {
                   ritual={ritual}
                   motionLevel={motionLevel}
                   onOpen={() => openRelic(ritual)}
-                  onDuplicate={() => duplicateRitual(ritual)}
+                  onDuplicate={() => echo(ritual)}
                   onExport={() => exportSingleRitual(ritual)}
                   onDelete={() => deleteRitual(ritual.id)}
                 />
@@ -123,12 +154,23 @@ export default function Reliquary() {
               <HaloButton onClick={() => refine(openRitual)} variant="solid" accent="sage">
                 Refine in the loom
               </HaloButton>
-              <HaloButton onClick={() => duplicateRitual(openRitual)} accent="champagne">
+              <HaloButton onClick={() => echo(openRitual)} accent="champagne">
                 Echo
               </HaloButton>
               <HaloButton onClick={() => exportSingleRitual(openRitual)} accent="ember">
                 Export JSON
               </HaloButton>
+              {openRitual.onChain && openRitual.explorerUrl ? (
+                <a
+                  href={openRitual.explorerUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-[11px] tracking-loom uppercase px-4 py-2 rounded-full"
+                  style={{ border: '1px solid var(--sage)', color: 'var(--sage-text)' }}
+                >
+                  View on explorer
+                </a>
+              ) : null}
             </div>
           </div>
         ) : null}

@@ -17,7 +17,7 @@ import {
 } from '../utils/storage.js'
 import { DEMO_RITUALS } from '../data/demoRituals.js'
 import { generateRitualArtifact } from '../utils/generateRitualArtifact.js'
-import { setGenLayerMock } from '../genlayer/genlayerClient.js'
+import { setGenLayerMode, fetchChainRelics } from '../genlayer/genlayerClient.js'
 
 const AppContext = createContext(null)
 
@@ -38,7 +38,7 @@ function emptyDraft() {
 
 function initState() {
   const settings = loadSettings()
-  setGenLayerMock(settings.genlayerMock)
+  setGenLayerMode(settings.genlayerMode)
   let rituals = loadRituals()
   if (rituals == null) {
     if (!hasSeeded()) {
@@ -54,6 +54,7 @@ function initState() {
     entered: false,
     settings,
     rituals,
+    chainRelics: [],
     draft: emptyDraft(),
     highlightRole: null,
     lastArtifact: null
@@ -88,6 +89,8 @@ function reducer(state, action) {
       return { ...state, rituals: state.rituals.filter((r) => r.id !== action.id) }
     case 'SET_RITUALS':
       return { ...state, rituals: action.rituals }
+    case 'SET_CHAIN_RELICS':
+      return { ...state, chainRelics: action.relics }
     case 'HIGHLIGHT_ROLE':
       return { ...state, highlightRole: action.role }
     case 'SET_ARTIFACT':
@@ -107,8 +110,40 @@ export function AppProvider({ children }) {
 
   useEffect(() => {
     saveSettings(state.settings)
-    setGenLayerMock(state.settings.genlayerMock)
+    setGenLayerMode(state.settings.genlayerMode)
   }, [state.settings])
+
+  // In live mode, gently fetch the on-chain artifacts and keep them in a feed
+  // that the Reliquary merges in as verified relics. The local collection is
+  // never touched. Reads retry with backoff inside the client and any failure
+  // simply yields an empty feed, so the studio stays full and never blocks.
+  useEffect(() => {
+    let cancelled = false
+    let timer = null
+
+    async function pull() {
+      if (state.settings.genlayerMode !== 'live') {
+        if (!cancelled) dispatch({ type: 'SET_CHAIN_RELICS', relics: [] })
+        return
+      }
+      try {
+        const relics = await fetchChainRelics()
+        if (!cancelled) dispatch({ type: 'SET_CHAIN_RELICS', relics })
+      } catch (err) {
+        if (!cancelled) dispatch({ type: 'SET_CHAIN_RELICS', relics: [] })
+      }
+    }
+
+    pull()
+    if (state.settings.genlayerMode === 'live') {
+      // Gentle poll, no faster than every 90 seconds.
+      timer = setInterval(pull, 90000)
+    }
+    return () => {
+      cancelled = true
+      if (timer) clearInterval(timer)
+    }
+  }, [state.settings.genlayerMode])
 
   // Apply theme and motion classes to the document root.
   useEffect(() => {
@@ -145,6 +180,30 @@ export function AppProvider({ children }) {
     dispatch({ type: 'LOAD_DRAFT', ritual: sealed })
     return artifact
   }, [state.draft])
+
+  // Seal an artifact produced elsewhere (the real on-chain analyze). Keeps the
+  // current draft's structure and stores the authoritative civic assessment.
+  const saveSealedArtifact = useCallback(
+    (artifact) => {
+      const draft = state.draft
+      const sealed = {
+        ...draft,
+        id: draft.id || artifact.ritualId,
+        name: artifact.name || draft.name,
+        createdAt: draft.createdAt || Date.now(),
+        sealed: true,
+        verified: Boolean(artifact.verified),
+        txHash: artifact.txHash || null,
+        contract: artifact.contract || null,
+        artifact
+      }
+      dispatch({ type: 'SAVE_RITUAL', ritual: sealed })
+      dispatch({ type: 'SET_ARTIFACT', artifact })
+      dispatch({ type: 'LOAD_DRAFT', ritual: sealed })
+      return artifact
+    },
+    [state.draft]
+  )
 
   const duplicateRitual = useCallback((ritual) => {
     const copy = {
@@ -189,6 +248,7 @@ export function AppProvider({ children }) {
       resetDraft,
       highlightRole,
       sealRitual,
+      saveSealedArtifact,
       duplicateRitual,
       deleteRitual,
       setRituals,
@@ -205,6 +265,7 @@ export function AppProvider({ children }) {
       resetDraft,
       highlightRole,
       sealRitual,
+      saveSealedArtifact,
       duplicateRitual,
       deleteRitual,
       setRituals,

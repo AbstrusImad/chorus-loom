@@ -16,6 +16,24 @@ community moves, stops, decides, corrects, waits or responds.
 
 Governance is not only voting. It is choreography.
 
+## Live
+
+- App: https://chorus-loom.pages.dev/
+- Contract (GenLayer Bradbury Testnet): `0x86e99d0D5A679e01795ABa2D3f23B9c393693F20`
+- Explorer: https://explorer-bradbury.genlayer.com/address/0x86e99d0D5A679e01795ABa2D3f23B9c393693F20
+- Deploy transaction: `0x188dcdae5c6fd3bba395689bba0d80d96b20e8da1353351ea412563809c621a1`
+- Repository: https://github.com/AbstrusImad/chorus-loom
+- Faucet (test GEN): https://testnet-faucet.genlayer.foundation/
+
+Chorus Loom runs live on GenLayer Bradbury. Sealing a ritual is a real on-chain
+consensus write: a civic-choreographer model judges the ritual's balance and
+validators agree on the categorical posture exactly and the four scores (clarity,
+friction, balance, resilience) within tolerance, binding the result to a content
+hash. The deployable Intelligent Contract is `genlayer/contract.py`. Connect a
+wallet on Bradbury and claim test GEN from the faucet to weave on chain. All demo
+rituals are still seeded so the studio feels full, and a mock mode remains in
+Settings as an offline fallback.
+
 ## What problem it solves
 
 Most governance tooling captures the text of decisions: proposals, votes,

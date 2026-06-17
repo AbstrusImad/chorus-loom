@@ -13,6 +13,20 @@ import { complexityOf } from '../../utils/formatters.js'
 export default function RelicCapsule({ ritual, onOpen, onDuplicate, onExport, onDelete, motionLevel = 0.85 }) {
   const artifact = ritual.artifact || generateRitualArtifact(ritual)
   const complexity = complexityOf(ritual)
+  const verified = Boolean(ritual.onChain || ritual.verified || (artifact && artifact.verified))
+
+  const actions = verified
+    ? [
+        { label: 'Open', accent: 'sage', onClick: onOpen },
+        { label: 'Echo', accent: 'champagne', onClick: onDuplicate },
+        { label: 'Export', accent: 'ember', onClick: onExport }
+      ]
+    : [
+        { label: 'Open', accent: 'sage', onClick: onOpen },
+        { label: 'Echo', accent: 'champagne', onClick: onDuplicate },
+        { label: 'Export', accent: 'ember', onClick: onExport },
+        { label: 'Release', accent: 'crimson', onClick: onDelete }
+      ]
 
   return (
     <motion.div
@@ -37,6 +51,22 @@ export default function RelicCapsule({ ritual, onOpen, onDuplicate, onExport, on
           <div className="absolute top-3 left-3">
             <FloatingTag accent="sage">{ritual.type}</FloatingTag>
           </div>
+          {verified ? (
+            <div className="absolute top-3 right-3">
+              <span
+                className="inline-flex items-center gap-1 font-mono text-[9px] tracking-wide-mono uppercase px-2.5 py-1 rounded-full"
+                style={{
+                  color: 'var(--sage-text)',
+                  background: 'var(--ink1)',
+                  border: '1px solid var(--sage)',
+                  boxShadow: '0 0 16px var(--sage-glow)'
+                }}
+              >
+                <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: 'var(--sage)' }} />
+                Verified on GenLayer
+              </span>
+            </div>
+          ) : null}
         </div>
         <div className="p-5">
           <h3 className="font-display text-lg" style={{ color: 'var(--bone)' }}>
@@ -78,14 +108,7 @@ export default function RelicCapsule({ ritual, onOpen, onDuplicate, onExport, on
         </div>
       </button>
       <div className="absolute bottom-4 right-4">
-        <RadialActionMenu
-          actions={[
-            { label: 'Open', accent: 'sage', onClick: onOpen },
-            { label: 'Echo', accent: 'champagne', onClick: onDuplicate },
-            { label: 'Export', accent: 'ember', onClick: onExport },
-            { label: 'Release', accent: 'crimson', onClick: onDelete }
-          ]}
-        />
+        <RadialActionMenu actions={actions} />
       </div>
     </motion.div>
   )

@@ -7,6 +7,7 @@ import { useRef, useState } from 'react'
 import { useApp } from '../store/AppStore.jsx'
 import { HaloButton, MicroNote, DriftPanel, RibbonToggle, FloatingTag } from '../components/shared/primitives.jsx'
 import { exportRitualsToFile, importRitualsFromFile } from '../utils/exportImport.js'
+import { EXPLORER, FAUCET, CONTRACT_ADDRESS, IS_DEPLOYED } from '../genlayer/genlayerClient.js'
 
 function Row({ title, note, children }) {
   return (
@@ -115,9 +116,72 @@ export default function Settings() {
             </div>
           </Row>
 
-          <Row title="GenLayer mock mode" note="Simulate recording rituals on chain. No network is used.">
-            <RibbonToggle on={settings.genlayerMock} onChange={(v) => setSettings({ genlayerMock: v })} />
+          <Row
+            title="GenLayer network"
+            note="Live weaves civic scores through AI consensus on the Bradbury testnet. Mock simulates it instantly with no network."
+          >
+            <div className="flex items-center gap-2">
+              <HaloButton
+                onClick={() => setSettings({ genlayerMode: 'live' })}
+                variant={settings.genlayerMode === 'live' ? 'solid' : 'outline'}
+                accent="sage"
+              >
+                Live
+              </HaloButton>
+              <HaloButton
+                onClick={() => setSettings({ genlayerMode: 'mock' })}
+                variant={settings.genlayerMode === 'mock' ? 'solid' : 'outline'}
+                accent="champagne"
+              >
+                Mock
+              </HaloButton>
+            </div>
           </Row>
+
+          {settings.genlayerMode === 'live' ? (
+            <div
+              className="rounded-2xl px-5 py-4 flex flex-col gap-3"
+              style={{ background: 'var(--ink2)', border: '1px solid var(--line1)' }}
+            >
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <div className="font-body text-sm" style={{ color: 'var(--bone)' }}>
+                    Bradbury testnet
+                  </div>
+                  <div className="font-body text-xs mt-0.5" style={{ color: 'var(--ash)' }}>
+                    {IS_DEPLOYED
+                      ? 'Connect a wallet from the glyph in the corner. AI transactions hold a small fee reserve that is mostly refunded.'
+                      : 'The contract address will be wired in after deployment.'}
+                  </div>
+                </div>
+                <FloatingTag accent={IS_DEPLOYED ? 'sage' : 'ember'}>
+                  {IS_DEPLOYED ? 'deployed' : 'pending deploy'}
+                </FloatingTag>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {IS_DEPLOYED ? (
+                  <a
+                    href={`${EXPLORER}/address/${CONTRACT_ADDRESS}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-mono text-[10px] tracking-wide-mono uppercase px-3 py-1.5 rounded-full"
+                    style={{ border: '1px solid var(--line2)', color: 'var(--sage-text)' }}
+                  >
+                    Contract on explorer
+                  </a>
+                ) : null}
+                <a
+                  href={FAUCET}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-[10px] tracking-wide-mono uppercase px-3 py-1.5 rounded-full"
+                  style={{ border: '1px solid var(--line2)', color: 'var(--champagne-text)' }}
+                >
+                  Testnet faucet
+                </a>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-10">
@@ -172,7 +236,7 @@ export default function Settings() {
         ) : null}
 
         <p className="font-mono text-[10px] tracking-wide-mono uppercase mt-10" style={{ color: 'var(--mute)' }}>
-          Chorus Loom runs entirely in your browser. No accounts, no servers, no network calls.
+          Your rituals live in your browser. In live mode, sealing a civic score is the only on-chain action, signed in your wallet on GenLayer Bradbury. Mock mode makes no network calls.
         </p>
       </div>
     </div>

@@ -9,6 +9,7 @@ import RitualWeave from '../loom/RitualWeave.jsx'
 import TempoDial from '../loom/TempoDial.jsx'
 import { FloatingTag, MicroNote } from './primitives.jsx'
 import { complexityOf } from '../../utils/formatters.js'
+import { EXPLORER } from '../../genlayer/genlayerClient.js'
 
 export default function CivicScorePlate({ artifact, ritual, motionLevel = 0.85 }) {
   if (!artifact) return null
@@ -96,10 +97,44 @@ export default function CivicScorePlate({ artifact, ritual, motionLevel = 0.85 }
         className="px-6 py-4 border-t flex items-center justify-between gap-4 flex-wrap"
         style={{ borderColor: 'var(--line1)', background: 'var(--ink0)' }}
       >
-        <MicroNote>GenLayer mock proof</MicroNote>
-        <code className="font-mono text-xs break-all" style={{ color: 'var(--champagne-text)' }}>
-          {artifact.mockProof}
-        </code>
+        {artifact.verified ? (
+          <>
+            <div className="flex items-center gap-2 flex-wrap">
+              <FloatingTag accent="sage">verified on genlayer</FloatingTag>
+              {artifact.posture ? <FloatingTag accent="champagne">{artifact.posture}</FloatingTag> : null}
+            </div>
+            <div className="flex items-center gap-3 flex-wrap">
+              {artifact.txHash ? (
+                <a
+                  href={`${EXPLORER}/tx/${artifact.txHash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-xs break-all"
+                  style={{ color: 'var(--sage-text)' }}
+                >
+                  {artifact.txHash.slice(0, 12)}...{artifact.txHash.slice(-8)}
+                </a>
+              ) : artifact.contract ? (
+                <a
+                  href={`${EXPLORER}/address/${artifact.contract}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-xs break-all"
+                  style={{ color: 'var(--sage-text)' }}
+                >
+                  {artifact.contract.slice(0, 10)}...{artifact.contract.slice(-6)}
+                </a>
+              ) : null}
+            </div>
+          </>
+        ) : (
+          <>
+            <MicroNote>GenLayer mock proof</MicroNote>
+            <code className="font-mono text-xs break-all" style={{ color: 'var(--champagne-text)' }}>
+              {artifact.mockProof}
+            </code>
+          </>
+        )}
       </div>
     </motion.div>
   )

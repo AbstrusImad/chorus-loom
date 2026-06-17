@@ -32,12 +32,20 @@ export const DEFAULT_SETTINGS = {
   animationIntensity: 0.85,
   reducedMotion: false,
   genlayerMock: true,
+  genlayerMode: 'live',
   density: 'comfortable'
 }
 
 export function loadSettings() {
   const stored = safeParse(localStorage.getItem(SETTINGS_KEY), {})
-  return { ...DEFAULT_SETTINGS, ...stored }
+  const merged = { ...DEFAULT_SETTINGS, ...stored }
+  // Migrate older settings that only carried the boolean mock flag. A stored
+  // genlayerMode always wins; otherwise default to live regardless of the old
+  // mock flag so the studio talks to Bradbury out of the box.
+  if (!stored || typeof stored.genlayerMode !== 'string') {
+    merged.genlayerMode = 'live'
+  }
+  return merged
 }
 
 export function saveSettings(settings) {
